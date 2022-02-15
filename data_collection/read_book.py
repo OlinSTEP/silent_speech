@@ -1,4 +1,5 @@
 import os
+import random
 import nltk
 
 class Book(object):
@@ -16,9 +17,13 @@ class Book(object):
         bookmark_file = self.file + '.bookmark'
         if os.path.exists(bookmark_file):
             with open(bookmark_file) as f:
-                self.current_index = int(f.read().strip())
+                self._current_index = int(f.read().strip())
         else:
-            self.current_index = 0
+            self._current_index = 0
+        self.current_index = self._current_index
+
+        self.idxs = [i for i in range(len(sentences))]
+        random.shuffle(self.idxs)
 
     def __enter__(self):
         return self
@@ -32,4 +37,7 @@ class Book(object):
         return self.sentences[self.current_index]
 
     def next(self):
-        self.current_index = (self.current_index+1) % len(self.sentences)
+        self._current_index = (self._current_index+1) % len(self.sentences)
+        if self._current_index == 0:
+            random.shuffle(self.idxs)
+        self.current_index = self.idxs[self._current_index]
