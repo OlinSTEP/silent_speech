@@ -4,6 +4,9 @@ import numpy as np
 import logging
 import subprocess
 
+import wandb
+from tqdm import tqdm
+
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -203,7 +206,7 @@ def dtw_loss(predictions, phoneme_predictions, example, phoneme_eval=False, phon
 
     return sum(losses)/total_length, correct_phones/total_length
 
-def train_model(trainset, devset, device, save_sound_outputs=True, n_epochs=80):
+def train_model(trainset, devset, device, save_sound_outputs=True, n_epochs=100):
     if FLAGS.data_size_fraction >= 1:
         training_subset = trainset
     else:
@@ -234,7 +237,7 @@ def train_model(trainset, devset, device, save_sound_outputs=True, n_epochs=80):
     batch_idx = 0
     for epoch_idx in range(n_epochs):
         losses = []
-        for example in dataloader:
+        for example in tqdm(dataloader):
             optim.zero_grad()
             schedule_lr(batch_idx)
 
@@ -255,6 +258,12 @@ def train_model(trainset, devset, device, save_sound_outputs=True, n_epochs=80):
         val, phoneme_acc, _ = test(model, devset, device)
         lr_sched.step(val)
         logging.info(f'finished epoch {epoch_idx+1} - validation loss: {val:.4f} training loss: {train_loss:.4f} phoneme accuracy: {phoneme_acc*100:.2f}')
+        wandb.log({
+            "epoch": epoch_idx + 1,
+            "train_loss": train_loss,
+            "val_loss": val,
+            "phoneme_acc": phoneme_acc * 100,
+        })
         torch.save(model.state_dict(), os.path.join(FLAGS.output_directory,'model.pt'))
         if save_sound_outputs:
             save_output(model, devset[0], os.path.join(FLAGS.output_directory, f'epoch_{epoch_idx}_output.wav'), device)
@@ -287,6 +296,9 @@ def main():
     logging.info('train / dev split: %d %d',len(trainset),len(devset))
 
     device = 'cuda' if torch.cuda.is_available() and not FLAGS.debug else 'cpu'
+
+    wandb.init(project="Digital Voicing of Silent Speech", entity="step-emg")
+    wandb.config.update(flags.FLAGS)
 
     model = train_model(trainset, devset, device, save_sound_outputs=(FLAGS.pretrained_wavenet_model is not None))
 

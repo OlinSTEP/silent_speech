@@ -52,7 +52,7 @@ def main():
     print_confusion(confusion)
 
     for i, datapoint in enumerate(testset):
-        save_output(ensemble, datapoint, os.path.join(FLAGS.output_directory, f'example_output_{i}.wav'), device)
+      save_output(ensemble, datapoint, os.path.join(FLAGS.output_directory, f'example_output_{i}.wav'), device)
 
     evaluate(testset, FLAGS.output_directory)
 
