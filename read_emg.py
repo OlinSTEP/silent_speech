@@ -197,8 +197,8 @@ class EMGDataset(torch.utils.data.Dataset):
                     with open(os.path.join(directory_info.directory, fname)) as f:
                         info = json.load(f)
                         if info['sentence_index'] >= 0: # boundary clips of silence are marked -1
-                            location_in_testset = idx_str in testset
-                            location_in_devst = idx_str in devset
+                            location_in_testset = int(idx_str) in testset
+                            location_in_devset = int(idx_str) in devset
                             if (test and location_in_testset and not directory_info.exclude_from_testset) \
                                     or (dev and location_in_devset and not directory_info.exclude_from_testset) \
                                     or (not test and not dev and not location_in_testset and not location_in_devset):
