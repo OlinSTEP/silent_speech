@@ -79,7 +79,7 @@ def main(stdscr, num_read_through, book_name):
         stdscr.addstr(0,0,'<Press any key to begin.>')
         stdscr.refresh()
 
-        while output_idx < num_read_through * len(book.sentences):
+        while output_idx < num_read_through * len(book.sentences) + 1:
             r.update()
             if not recording:
                 c = stdscr.getch()
