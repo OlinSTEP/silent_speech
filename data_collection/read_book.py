@@ -3,8 +3,8 @@ import random
 import nltk
 
 class Book(object):
-    def __init__(self, book_file):
-        self.file = book_file
+    def __init__(self, book_file, book_name):
+        self.file = book_name
 
         sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
 
