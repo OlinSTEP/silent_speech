@@ -20,10 +20,10 @@ class Book(object):
                 self._current_index = int(f.read().strip())
         else:
             self._current_index = 0
-        self.current_index = self._current_index
 
         self.idxs = [i for i in range(len(sentences))]
         random.shuffle(self.idxs)
+        self.current_index = self.idxs[self._current_index]
 
     def __enter__(self):
         return self
@@ -38,6 +38,6 @@ class Book(object):
 
     def next(self):
         self._current_index = (self._current_index+1) % len(self.sentences)
+        self.current_index = self.idxs[self._current_index]
         if self._current_index == 0:
             random.shuffle(self.idxs)
-        self.current_index = self.idxs[self._current_index]
