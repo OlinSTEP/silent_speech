@@ -7,3 +7,7 @@ To set up:
 2) Markers from the a python script (WRITE THIS)
 3) Lab recorder (and Neuropype in the future for live) to pull all data together.
 4) Script to filter and parse the data. (WRITE THIS)
+
+
+pip3 install absl-py
+pip3 install pylsl
