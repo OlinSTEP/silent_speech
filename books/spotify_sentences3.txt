@@ -1,0 +1,3 @@
+Open spotify. 
+Play next. 
+Skip song.
